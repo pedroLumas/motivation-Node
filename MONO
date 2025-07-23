@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividades con Puntuación Diaria</title>
+    <!-- Incluye Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluye la fuente Manrope de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define la fuente Manrope */
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        /* Estilo para la textura de cuarzo y el efecto pulido */
+        .polished-blue-module {
+            background-color: #1e3a8a; /* Un azul base más suave (blue-800) */
+            background-image:
+                /* Gradientes para la textura de cuarzo */
+                linear-gradient(to bottom right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to top left, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                /* Gradiente para el efecto pulido/brillante */
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.08));
+            background-size: 10px 10px, 10px 10px, 5px 5px, 5px 5px, 100% 100%;
+            background-blend-mode: overlay;
+            /* Sombra interna para dar profundidad y un aspecto pulido */
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 -2px 4px rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-black min-h-screen flex items-center justify-center p-4">
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg w-full max-w-5xl flex flex-col lg:flex-row gap-6">
+        <!-- Columna Izquierda: Gestionar Actividades (Colapsable) -->
+        <div class="flex-1 p-4 border border-blue-800 rounded-xl polished-blue-module text-gray-100">
+            <div class="flex justify-between items-center mb-4 cursor-pointer" id="toggleCreateActivityForm">
+                <h2 class="text-xl font-bold text-gray-100">Gestionar Actividades</h2>
+                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl font-bold transition-transform duration-300 transform">
+                    <span id="toggleIcon">+</span>
+                </div>
+            </div>
+            <div id="createActivityFormContent" class="space-y-4 hidden">
+                <!-- Formulario para añadir nueva actividad reutilizable -->
+                <div class="mb-4">
+                    <label for="activityName" class="block text-sm font-bold text-gray-200 mb-1">Nombre de la Actividad</label>
+                    <input type="text" id="activityName" placeholder="Ej. Tarea de Matemáticas"
+                           class="mt-1 block w-full px-4 py-2 border border-blue-600 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm bg-blue-900 text-white font-bold"
+                           required>
+                </div>
+                <div class="mb-4">
+                    <label for="activityScore" class="block text-sm font-bold text-gray-200 mb-1">Puntuación (-10 a 10)</label>
+                    <input type="number" id="activityScore" min="-10" max="10" value="0"
+                           class="mt-1 block w-full px-4 py-2 border border-blue-600 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm bg-blue-900 text-white font-bold"
+                           required>
+                </div>
+                <div class="mb-4">
+                    <label for="activityEmoji" class="block text-sm font-bold text-gray-200 mb-1">Emoji (opcional)</label>
+                    <input type="text" id="activityEmoji" placeholder="Ej. 📚, 🏃‍♂️, 😴" maxlength="2"
+                           class="mt-1 block w-full px-4 py-2 border border-blue-600 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm bg-blue-900 text-white font-bold">
+                </div>
+                <button id="addActivityBtn"
+                        class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold">
+                    Añadir Actividad
+                </button>
+                <button id="suggestActivityLLMBtn"
+                        class="w-full mt-4 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold flex items-center justify-center">
+                    <span id="suggestActivityButtonText">Sugerir Actividad ✨</span>
+                    <svg id="suggestActivityLoadingSpinner" class="animate-spin h-5 w-5 text-white ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Columna Central: Actividades Disponibles (Barra Aislada) -->
+        <div class="flex-1 lg:flex-2 p-4 border border-blue-800 rounded-xl polished-blue-module text-gray-100">
+            <h2 class="text-xl font-bold text-gray-100 mb-4 text-center">Actividades Disponibles (Haz clic para añadir al día)</h2>
+            <div id="availableActivitiesList" class="space-y-3">
+                <!-- Las actividades reutilizables se renderizarán aquí -->
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Resumen Diario -->
+        <div class="flex-1 p-4 border border-blue-800 rounded-xl polished-blue-module flex flex-col items-center text-gray-100">
+            <h2 class="text-xl font-bold text-gray-100 mb-4 text-center">Resumen Diario</h2>
+            <div id="dailySummary" class="flex flex-col items-center space-y-4 w-full">
+                <!-- El resumen del día actual se renderizará aquí -->
+            </div>
+            <button id="generateReflectionBtn"
+                    class="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold">
+                <span id="reflectionButtonText">Generar Reflexión Diaria ✨</span>
+                <svg id="reflectionLoadingSpinner" class="animate-spin h-5 w-5 text-white ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+            <div id="dailyReflectionOutput" class="mt-4 p-3 bg-blue-900 rounded-lg shadow-sm border border-blue-700 text-gray-200 text-sm hidden w-full font-bold">
+                <!-- La reflexión de Gemini se mostrará aquí -->
+            </div>
+        </div>
+
+        <!-- Mensaje de error/información (fuera de las columnas para mejor visibilidad) -->
+        <div id="messageBox" class="hidden px-4 py-3 rounded-md relative mb-4 fixed bottom-4 right-4 z-50 shadow-lg">
+            <span id="messageText" class="block sm:inline font-bold"></span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="document.getElementById('messageBox').classList.add('hidden');">
+                <svg class="fill-current h-6 w-6" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Cerrar</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+            </span>
+        </div>
+
+    </div>
+
+    <script>
+        // Array para almacenar las actividades reutilizables (plantillas)
+        let reusableActivities = [];
+        // Objeto para almacenar las puntuaciones acumuladas por día
+        // Formato: { 'YYYY-MM-DD': totalScore }
+        let dailyScores = {};
+
+        // Obtener la fecha actual en formato YYYY-MM-DD
+        const today = new Date().toISOString().slice(0, 10);
+
+        // Referencias a los elementos del DOM
+        const activityNameInput = document.getElementById('activityName');
+        const activityScoreInput = document.getElementById('activityScore');
+        const activityEmojiInput = document.getElementById('activityEmoji'); // Nuevo input para el emoji
+        const addActivityBtn = document.getElementById('addActivityBtn');
+        const availableActivitiesListDiv = document.getElementById('availableActivitiesList');
+        const dailySummaryDiv = document.getElementById('dailySummary');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const generateReflectionBtn = document.getElementById('generateReflectionBtn');
+        const reflectionButtonText = document.getElementById('reflectionButtonText');
+        const reflectionLoadingSpinner = document.getElementById('reflectionLoadingSpinner');
+        const dailyReflectionOutput = document.getElementById('dailyReflectionOutput');
+
+        // Nuevas referencias para la sugerencia de actividad LLM
+        const suggestActivityLLMBtn = document.getElementById('suggestActivityLLMBtn');
+        const suggestActivityButtonText = document.getElementById('suggestActivityButtonText');
+        const suggestActivityLoadingSpinner = document.getElementById('suggestActivityLoadingSpinner');
+
+
+        // Referencias para la funcionalidad colapsable
+        const toggleCreateActivityForm = document.getElementById('toggleCreateActivityForm');
+        const createActivityFormContent = document.getElementById('createActivityFormContent');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        /**
+         * Guarda los datos actuales en localStorage.
+         */
+        function saveData() {
+            localStorage.setItem('reusableActivities', JSON.stringify(reusableActivities));
+            localStorage.setItem('dailyScores', JSON.stringify(dailyScores));
+        }
+
+        /**
+         * Carga los datos desde localStorage.
+         */
+        function loadData() {
+            const storedActivities = localStorage.getItem('reusableActivities');
+            if (storedActivities) {
+                reusableActivities = JSON.parse(storedActivities);
+            }
+
+            const storedDailyScores = localStorage.getItem('dailyScores');
+            if (storedDailyScores) {
+                dailyScores = JSON.parse(storedDailyScores);
+            }
+
+            // Asegurarse de que la puntuación del día actual esté inicializada
+            if (!dailyScores[today]) {
+                dailyScores[today] = 0;
+            }
+        }
+
+        /**
+         * Muestra un mensaje en la caja de mensajes con colores dinámicos.
+         * @param {string} message - El mensaje a mostrar.
+         * @param {number} score - La puntuación de la actividad que determina el color.
+         */
+        function showMessage(message, score) {
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden', 'bg-red-100', 'border-red-400', 'text-red-700', 'bg-green-100', 'border-green-400', 'text-green-700', 'bg-blue-100', 'border-blue-400', 'text-blue-700');
+            messageBox.querySelector('svg').classList.remove('text-red-500', 'text-green-500', 'text-blue-500');
+
+            if (score > 0) {
+                messageBox.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
+                messageBox.querySelector('svg').classList.add('text-green-500');
+            } else if (score < 0) {
+                messageBox.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+                messageBox.querySelector('svg').classList.add('text-red-500');
+            } else { // score === 0
+                messageBox.classList.add('bg-blue-100', 'border-blue-400', 'text-blue-700');
+                messageBox.querySelector('svg').classList.add('text-blue-500');
+            }
+
+            // Ocultar el mensaje después de 3 segundos
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 3000);
+        }
+
+        /**
+         * Obtiene un emoji por defecto basado en la puntuación.
+         * @param {number} score - La puntuación de la actividad.
+         * @returns {string} El emoji por defecto.
+         */
+        function getDefaultEmoji(score) {
+            if (score > 0) {
+                return '✅'; // Positivo
+            } else if (score < 0) {
+                return '❌'; // Negativo
+            } else {
+                return '💡'; // Neutral
+            }
+        }
+
+        /**
+         * Renderiza la lista de actividades reutilizables en el DOM.
+         */
+        function renderAvailableActivities() {
+            availableActivitiesListDiv.innerHTML = ''; // Limpiar la lista actual
+
+            if (reusableActivities.length === 0) {
+                availableActivitiesListDiv.innerHTML = '<p class="text-center font-bold text-gray-300">No hay actividades reutilizables. ¡Crea una!</p>';
+                return;
+            }
+
+            reusableActivities.forEach((activity, index) => {
+                const activityItem = document.createElement('div');
+                // Usar bg-blue-900 para los elementos de la lista para un contraste sutil con el fondo del módulo
+                activityItem.className = 'flex justify-between items-center p-3 bg-blue-900 rounded-md shadow-sm border border-blue-800 cursor-pointer hover:bg-blue-800 transition duration-150 ease-in-out';
+                activityItem.dataset.index = index; // Guardar el índice para acceder a la actividad
+                activityItem.innerHTML = `
+                    <span class="text-md font-bold text-gray-100">${activity.emoji || getDefaultEmoji(activity.score)} ${activity.name}</span>
+                    <span class="text-lg font-bold ${activity.score >= 0 ? 'text-green-400' : 'text-red-400'}">${activity.score}</span>
+                `;
+                availableActivitiesListDiv.appendChild(activityItem);
+            });
+        }
+
+        /**
+         * Renderiza el resumen de puntuación para el día actual.
+         */
+        function renderDailySummary() {
+            dailySummaryDiv.innerHTML = ''; // Limpiar el resumen actual
+
+            const currentDayScore = dailyScores[today] || 0; // Obtener la puntuación del día actual, o 0 si no existe
+
+            const dailyItem = document.createElement('div');
+            // Usar bg-blue-900 para el elemento dentro del resumen para un contraste sutil
+            dailyItem.className = 'bg-blue-900 p-4 rounded-lg shadow-sm border border-blue-800 flex flex-col items-center text-gray-100';
+
+            // Calcular el porcentaje de la barra. El rango total es de -100 a 100.
+            let positiveHeight = 0;
+            let negativeHeight = 0;
+
+            if (currentDayScore > 0) {
+                positiveHeight = (currentDayScore / 100) * 50; // Max 50% for positive, scaled to 100 max score
+            } else if (currentDayScore < 0) {
+                negativeHeight = (Math.abs(currentDayScore) / 100) * 50; // Max 50% for negative, scaled to 100 max score
+            }
+
+            dailyItem.innerHTML = `
+                <div class="flex justify-between items-center mb-2 w-full">
+                    <h3 class="text-lg font-bold text-gray-100">Puntuación de Hoy (${today})</h3>
+                    <span class="text-2xl font-bold ${currentDayScore >= 0 ? 'text-green-400' : 'text-red-400'}">${currentDayScore}</span>
+                </div>
+                <!-- Contenedor de la barra de puntuación vertical con diseño mejorado (más gorda y redonda) -->
+                <div class="w-20 h-80 bg-gray-700 rounded-full flex flex-col relative overflow-hidden shadow-inner mx-auto mt-4">
+                    <!-- Barra positiva (verde) con degradado - crece hacia arriba desde el centro -->
+                    <div class="absolute bottom-1/2 left-0 right-0 bg-gradient-to-t from-green-400 to-green-600 rounded-t-full transition-all duration-300 ease-in-out"
+                         style="height: ${positiveHeight}%;"></div>
+                    <!-- Barra negativa (roja) con degradado - crece hacia abajo desde el centro -->
+                    <div class="absolute top-1/2 left-0 right-0 bg-gradient-to-b from-red-600 to-red-400 rounded-b-full transition-all duration-300 ease-in-out"
+                         style="height: ${negativeHeight}%;"></div>
+                    <!-- Línea central para claridad visual -->
+                    <div class="absolute left-0 right-0 top-1/2 transform -translate-y-1/2 h-0.5 bg-gray-400 z-10"></div>
+                </div>
+            `;
+            dailySummaryDiv.appendChild(dailyItem);
+        }
+
+        /**
+         * Maneja el evento de añadir una nueva actividad reutilizable.
+         */
+        addActivityBtn.addEventListener('click', () => {
+            const name = activityNameInput.value.trim();
+            const score = parseInt(activityScoreInput.value);
+            const emoji = activityEmojiInput.value.trim(); // Obtener el emoji del input
+
+            if (!name) {
+                showMessage('Por favor, introduce un nombre para la actividad.', 0); // Neutral color for input error
+                return;
+            }
+
+            if (isNaN(score) || score < -10 || score > 10) {
+                showMessage('La puntuación debe ser un número entero entre -10 y 10.', 0); // Neutral color for input error
+                return;
+            }
+
+            reusableActivities.push({ name, score, emoji }); // Guardar el emoji
+            activityNameInput.value = ''; // Limpiar el campo de nombre
+            activityScoreInput.value = '0'; // Resetear la puntuación
+            activityEmojiInput.value = ''; // Limpiar el campo de emoji
+            saveData(); // Guardar los datos
+            renderAvailableActivities(); // Volver a renderizar la lista de actividades disponibles
+        });
+
+        /**
+         * Maneja el clic en una actividad disponible para añadirla al día actual.
+         */
+        availableActivitiesListDiv.addEventListener('click', (event) => {
+            const clickedItem = event.target.closest('div[data-index]');
+            if (clickedItem) {
+                const index = parseInt(clickedItem.dataset.index);
+                const activity = reusableActivities[index];
+
+                if (activity) {
+                    dailyScores[today] += activity.score;
+                    // Asegurarse de que el score no exceda los límites de -100 a 100
+                    dailyScores[today] = Math.max(-100, Math.min(100, dailyScores[today]));
+                    saveData(); // Guardar los datos
+                    renderDailySummary(); // Actualizar el resumen del día
+                    dailyReflectionOutput.classList.add('hidden'); // Ocultar reflexión anterior
+                }
+            }
+        });
+
+        /**
+         * Genera una reflexión diaria usando la API de Gemini.
+         */
+        generateReflectionBtn.addEventListener('click', async () => {
+            const currentDayScore = dailyScores[today] || 0;
+
+            // Mostrar spinner y deshabilitar botón
+            reflectionButtonText.textContent = 'Generando...';
+            reflectionLoadingSpinner.classList.remove('hidden');
+            generateReflectionBtn.disabled = true;
+            dailyReflectionOutput.classList.add('hidden'); // Ocultar salida anterior
+
+            try {
+                let chatHistory = [];
+                const prompt = `Eres un asistente motivacional y reflexivo. Basado en la puntuación diaria de actividades de hoy, que es ${currentDayScore}, proporciona una breve reflexión o consejo.
+Si la puntuación es positiva, celebra el progreso y sugiere cómo mantenerlo.
+Si la puntuación es negativa, ofrece ánimo y consejos constructivos para mejorar.
+Si la puntuación es cero, sugiere formas de encontrar motivación o nuevas actividades.
+Mantén la respuesta concisa y en español.`;
+
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // La clave API será proporcionada por el entorno de Canvas
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const reflectionText = result.candidates[0].content.parts[0].text;
+                    dailyReflectionOutput.textContent = reflectionText;
+                    dailyReflectionOutput.classList.remove('hidden');
+                } else {
+                    dailyReflectionOutput.textContent = 'No se pudo generar la reflexión. Inténtalo de nuevo.';
+                    dailyReflectionOutput.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Error al generar la reflexión:', error);
+                dailyReflectionOutput.textContent = 'Error al conectar con el servicio de reflexión. Por favor, inténtalo más tarde.';
+                dailyReflectionOutput.classList.add('hidden');
+            } finally {
+                // Ocultar spinner y habilitar botón
+                reflectionButtonText.textContent = 'Generar Reflexión Diaria ✨';
+                reflectionLoadingSpinner.classList.add('hidden');
+                generateReflectionBtn.disabled = false;
+            }
+        });
+
+        /**
+         * Genera una sugerencia de actividad usando la API de Gemini.
+         */
+        suggestActivityLLMBtn.addEventListener('click', async () => {
+            // Mostrar spinner y deshabilitar botón
+            suggestActivityButtonText.textContent = 'Sugiriendo...';
+            suggestActivityLoadingSpinner.classList.remove('hidden');
+            suggestActivityLLMBtn.disabled = true;
+
+            try {
+                let chatHistory = [];
+                const prompt = `Sugiere una actividad diaria con un nombre, una puntuación entre -10 y 10, y un emoji representativo. La actividad debe ser algo común que la gente haga. Responde en formato JSON con las claves 'name' (string), 'score' (integer) y 'emoji' (string, opcional, máximo 2 caracteres). Por ejemplo: {'name': 'Leer un libro', 'score': 5, 'emoji': '📚'}`;
+
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = {
+                    contents: chatHistory,
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                "name": { "type": "STRING" },
+                                "score": { "type": "NUMBER", "minimum": -10, "maximum": 10 },
+                                "emoji": { "type": "STRING", "maxLength": 2, "description": "Optional emoji for the activity" }
+                            },
+                            "required": ["name", "score"]
+                        }
+                    }
+                };
+                const apiKey = ""; // La clave API será proporcionada por el entorno de Canvas
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const suggestedActivity = JSON.parse(result.candidates[0].content.parts[0].text);
+                    activityNameInput.value = suggestedActivity.name;
+                    activityScoreInput.value = suggestedActivity.score;
+                    activityEmojiInput.value = suggestedActivity.emoji || ''; // Rellenar el emoji si existe
+                } else {
+                    showMessage('No se pudo generar una sugerencia de actividad. Inténtalo de nuevo.', 0);
+                }
+            } catch (error) {
+                console.error('Error al generar la sugerencia de actividad:', error);
+                showMessage('Error al conectar con el servicio de sugerencias. Por favor, inténtalo más tarde.', 0);
+            } finally {
+                // Ocultar spinner y habilitar botón
+                suggestActivityButtonText.textContent = 'Sugerir Actividad ✨';
+                suggestActivityLoadingSpinner.classList.add('hidden');
+                suggestActivityLLMBtn.disabled = false;
+            }
+        });
+
+        // Funcionalidad para colapsar/expandir el formulario de crear actividad
+        toggleCreateActivityForm.addEventListener('click', () => {
+            createActivityFormContent.classList.toggle('hidden');
+            if (createActivityFormContent.classList.contains('hidden')) {
+                toggleIcon.textContent = '+';
+            } else {
+                toggleIcon.textContent = '-';
+            }
+        });
+
+
+        // Renderizar las actividades disponibles y el resumen diario al cargar la página por primera vez
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData(); // Cargar datos al inicio
+            renderAvailableActivities();
+            renderDailySummary();
+        });
+    </script>
+</body>
+</html>
