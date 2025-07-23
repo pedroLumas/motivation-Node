@@ -384,6 +384,7 @@
                 activityItem.innerHTML = `
                     <span class="text-md font-bold text-gray-800">${activity.emoji || getDefaultEmoji(activity.score)} ${activity.name}</span>
                     <span class="text-lg font-bold ${activity.score >= 0 ? 'text-green-600' : 'text-red-600'}">${activity.score}</span>
+                    <button class="delete-activity-btn text-red-500 hover:text-red-700 ml-2 text-xl" data-index="${index}">🗑️</button>
                 `;
                 availableActivitiesListDiv.appendChild(activityItem);
             });
@@ -529,6 +530,15 @@
          * Maneja el clic en una actividad disponible para añadirla al día actual.
          */
         availableActivitiesListDiv.addEventListener('click', (event) => {
+            // Comprobar si el clic fue en el botón de eliminar
+            if (event.target.classList.contains('delete-activity-btn')) {
+                const indexToDelete = parseInt(event.target.dataset.index);
+                reusableActivities.splice(indexToDelete, 1); // Eliminar la actividad del array
+                saveData(); // Guardar los cambios
+                renderAvailableActivities(); // Re-renderizar la lista
+                return; // Salir de la función para no añadir la actividad
+            }
+
             const clickedItem = event.target.closest('div[data-index]');
             if (clickedItem) {
                 const index = parseInt(clickedItem.dataset.index);
