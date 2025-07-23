@@ -14,59 +14,55 @@
             font-family: 'Manrope', sans-serif;
         }
 
-        /* Estilo para la textura de cuarzo y el efecto pulido */
-        .polished-blue-module {
-            background-color: #1e3a8a; /* Un azul base más suave (blue-800) */
+        /* Estilo para el efecto pulido en módulos */
+        .polished-module {
+            background-color: #FFFFFF; /* Blanco */
             background-image:
-                /* Gradientes para la textura de cuarzo */
-                linear-gradient(to bottom right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(to top left, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                /* Gradiente para el efecto pulido/brillante */
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.08));
-            background-size: 10px 10px, 10px 10px, 5px 5px, 5px 5px, 100% 100%;
+                /* Gradientes sutiles para el brillo/sombra */
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 0%, transparent 10%),
+                linear-gradient(to top, rgba(0, 0, 0, 0.02) 0%, transparent 10%);
+            background-size: 100% 100%;
             background-blend-mode: overlay;
             /* Sombra interna para dar profundidad y un aspecto pulido */
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 -2px 4px rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05), inset 0 -1px 3px rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
-<body class="bg-black min-h-screen flex items-center justify-center p-4">
-    <div class="bg-gray-900 p-6 rounded-xl shadow-lg w-full max-w-5xl flex flex-col lg:flex-row gap-6">
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-5xl flex flex-col lg:flex-row gap-6">
         <!-- Columna Izquierda: Gestionar Actividades (Colapsable) -->
-        <div class="flex-1 p-4 border border-blue-800 rounded-xl polished-blue-module text-gray-100">
+        <div class="flex-1 p-4 border border-gray-200 rounded-xl polished-module text-gray-700">
             <div class="flex justify-between items-center mb-4 cursor-pointer" id="toggleCreateActivityForm">
-                <h2 class="text-xl font-bold text-gray-100">Gestionar Actividades</h2>
-                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl font-bold transition-transform duration-300 transform">
+                <h2 class="text-xl font-bold text-gray-800">Gestionar Actividades</h2>
+                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold transition-transform duration-300 transform">
                     <span id="toggleIcon">+</span>
                 </div>
             </div>
             <div id="createActivityFormContent" class="space-y-4 hidden">
                 <!-- Formulario para añadir nueva actividad reutilizable -->
                 <div class="mb-4">
-                    <label for="activityName" class="block text-sm font-bold text-gray-200 mb-1">Nombre de la Actividad</label>
+                    <label for="activityName" class="block text-sm font-bold text-gray-700 mb-1">Nombre de la Actividad</label>
                     <input type="text" id="activityName" placeholder="Ej. Tarea de Matemáticas"
-                           class="mt-1 block w-full px-4 py-2 border border-blue-600 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm bg-blue-900 text-white font-bold"
+                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-800 font-bold"
                            required>
                 </div>
                 <div class="mb-4">
-                    <label for="activityScore" class="block text-sm font-bold text-gray-200 mb-1">Puntuación (-10 a 10)</label>
+                    <label for="activityScore" class="block text-sm font-bold text-gray-700 mb-1">Puntuación (-10 a 10)</label>
                     <input type="number" id="activityScore" min="-10" max="10" value="0"
-                           class="mt-1 block w-full px-4 py-2 border border-blue-600 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm bg-blue-900 text-white font-bold"
+                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-800 font-bold"
                            required>
                 </div>
                 <div class="mb-4">
-                    <label for="activityEmoji" class="block text-sm font-bold text-gray-200 mb-1">Emoji (opcional)</label>
+                    <label for="activityEmoji" class="block text-sm font-bold text-gray-700 mb-1">Emoji (opcional)</label>
                     <input type="text" id="activityEmoji" placeholder="Ej. 📚, 🏃‍♂️, 😴" maxlength="2"
-                           class="mt-1 block w-full px-4 py-2 border border-blue-600 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm bg-blue-900 text-white font-bold">
+                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-800 font-bold">
                 </div>
                 <button id="addActivityBtn"
                         class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold">
                     Añadir Actividad
                 </button>
                 <button id="suggestActivityLLMBtn"
-                        class="w-full mt-4 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold flex items-center justify-center">
+                        class="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold flex items-center justify-center">
                     <span id="suggestActivityButtonText">Sugerir Actividad ✨</span>
                     <svg id="suggestActivityLoadingSpinner" class="animate-spin h-5 w-5 text-white ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -77,29 +73,91 @@
         </div>
 
         <!-- Columna Central: Actividades Disponibles (Barra Aislada) -->
-        <div class="flex-1 lg:flex-2 p-4 border border-blue-800 rounded-xl polished-blue-module text-gray-100">
-            <h2 class="text-xl font-bold text-gray-100 mb-4 text-center">Actividades Disponibles (Haz clic para añadir al día)</h2>
+        <div class="flex-1 lg:flex-2 p-4 border border-gray-200 rounded-xl polished-module text-gray-700">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Actividades Disponibles (Haz clic para añadir al día)</h2>
             <div id="availableActivitiesList" class="space-y-3">
                 <!-- Las actividades reutilizables se renderizarán aquí -->
             </div>
         </div>
 
         <!-- Columna Derecha: Resumen Diario -->
-        <div class="flex-1 p-4 border border-blue-800 rounded-xl polished-blue-module flex flex-col items-center text-gray-100">
-            <h2 class="text-xl font-bold text-gray-100 mb-4 text-center">Resumen Diario</h2>
+        <div class="flex-1 p-4 border border-gray-200 rounded-xl polished-module flex flex-col items-center text-gray-700">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Resumen Diario</h2>
             <div id="dailySummary" class="flex flex-col items-center space-y-4 w-full">
                 <!-- El resumen del día actual se renderizará aquí -->
+                <div class="flex justify-center items-center mb-2 w-full">
+                    <h3 class="text-lg font-bold text-gray-800"><span id="todayDate"></span></h3>
+                </div>
+                <!-- Contenedor de la barra de puntuación vertical con diseño mejorado (más gorda y redonda) -->
+                <div class="w-20 h-80 bg-gray-300 rounded-full flex flex-col relative overflow-hidden shadow-inner mx-auto mt-4">
+                    <!-- Barra positiva (verde) con degradado - crece hacia arriba desde el centro -->
+                    <div id="positiveBar" class="absolute bottom-1/2 left-0 right-0 bg-gradient-to-t from-green-400 to-green-600 rounded-t-full transition-all duration-300 ease-in-out"
+                         style="height: 0%;"></div>
+                    <!-- Barra negativa (roja) con degradado - crece hacia abajo desde el centro -->
+                    <div id="negativeBar" class="absolute top-1/2 left-0 right-0 bg-gradient-to-b from-red-600 to-red-400 rounded-b-full transition-all duration-300 ease-in-out"
+                         style="height: 0%;"></div>
+                    <!-- Línea central para claridad visual -->
+                    <div class="absolute left-0 right-0 top-1/2 transform -translate-y-1/2 h-0.5 bg-gray-400 z-10"></div>
+                </div>
             </div>
-            <button id="generateReflectionBtn"
-                    class="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold">
-                <span id="reflectionButtonText">Generar Reflexión Diaria ✨</span>
-                <svg id="reflectionLoadingSpinner" class="animate-spin h-5 w-5 text-white ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+
+            <!-- Nuevo apartado de Estadísticas Diarias (Colapsable por Emojis) -->
+            <div class="w-full mt-6 p-4 border border-gray-200 rounded-xl bg-gray-100 text-gray-700">
+                <div class="flex justify-between items-center mb-4 cursor-pointer" id="toggleStatistics">
+                    <h2 class="text-xl font-bold text-gray-800">📊📉📈</h2>
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold transition-transform duration-300 transform">
+                        <span id="statisticsToggleIcon">+</span>
+                    </div>
+                </div>
+                <div id="statisticsContent" class="space-y-4 hidden">
+                    <!-- Panel atractivo para las estadísticas -->
+                    <div id="statisticsDisplayPanel" class="bg-white p-6 rounded-lg shadow-xl border border-gray-200">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Estadísticas Detalladas</h3>
+                        <div class="mb-4">
+                            <p class="font-bold text-lg text-gray-700">Total Positivo: <span id="totalPositiveScore" class="text-green-600">0</span></p>
+                            <p class="font-bold text-lg text-gray-700">Total Negativo: <span id="totalNegativeScore" class="text-red-600">0</span></p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="font-bold text-gray-700">Actividades Positivas: <span id="countPositiveActivities">0</span></p>
+                            <p class="font-bold text-gray-700">Actividades Negativas: <span id="countNegativeActivities">0</span></p>
+                            <p class="font-bold text-gray-700">Actividades Neutrales: <span id="countNeutralActivities">0</span></p>
+                        </div>
+                        <!-- Tres barras pequeñas para representar el conteo de actividades -->
+                        <div class="flex flex-col items-start space-y-2 mt-4">
+                            <div class="flex items-center w-full">
+                                <span class="text-green-600 font-bold mr-2">Positivas:</span>
+                                <div class="h-4 bg-gray-300 rounded-full flex-grow overflow-hidden shadow-inner">
+                                    <div id="barPositiveCount" class="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center w-full">
+                                <span class="text-red-600 font-bold mr-2">Negativas:</span>
+                                <div class="h-4 bg-gray-300 rounded-full flex-grow overflow-hidden shadow-inner">
+                                    <div id="barNegativeCount" class="h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center w-full">
+                                <span class="text-blue-600 font-bold mr-2">Neutrales:</span>
+                                <div class="h-4 bg-gray-300 rounded-full flex-grow overflow-hidden shadow-inner">
+                                    <div id="barNeutralCount" class="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <button id="suggestImprovementsBtn"
+                    class="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold flex items-center justify-center">
+                <span id="suggestImprovementsButtonText">Sugerir Mejoras para Mañana ✨</span>
+                <svg id="suggestImprovementsLoadingSpinner" class="animate-spin h-5 w-5 text-white ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
             </button>
-            <div id="dailyReflectionOutput" class="mt-4 p-3 bg-blue-900 rounded-lg shadow-sm border border-blue-700 text-gray-200 text-sm hidden w-full font-bold">
-                <!-- La reflexión de Gemini se mostrará aquí -->
+            <div id="dailyImprovementsOutput" class="mt-4 p-3 bg-blue-200 rounded-lg shadow-sm border border-blue-300 text-gray-700 text-sm hidden w-full font-bold">
+                <h4 class="text-lg font-bold mb-2">Sugerencias para Mañana:</h4>
+                <ul id="improvementsList" class="list-disc pl-5 space-y-1"></ul>
             </div>
         </div>
 
@@ -113,12 +171,42 @@
 
     </div>
 
+    <!-- Modal para las tareas del día -->
+    <div id="dailyTasksModal" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50 hidden modal-overlay">
+        <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md modal-content overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800">Tareas de Hoy (<span id="modalTodayDate"></span>)</h3>
+                <button id="closeDailyTasksModal" class="text-gray-400 hover:text-gray-700 text-3xl font-bold">&times;</button>
+            </div>
+
+            <!-- Barra de progreso horizontal para el total del día en el modal -->
+            <div class="w-full h-6 bg-gray-300 rounded-full flex relative overflow-hidden shadow-inner mb-4">
+                <div id="modalPositiveBar" class="absolute h-full bg-gradient-to-r from-green-400 to-green-600 rounded-r-full transition-all duration-300 ease-in-out"
+                     style="left: 50%; width: 0%;"></div>
+                <div id="modalNegativeBar" class="absolute h-full bg-gradient-to-l from-red-600 to-red-400 rounded-l-full transition-all duration-300 ease-in-out"
+                     style="left: 50%; width: 0%;"></div>
+                <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gray-400 z-10"></div>
+            </div>
+            <p class="text-center text-gray-800 text-lg font-bold mb-4">Total: <span id="modalDailyScore">0</span></p>
+
+            <div id="dailyTasksListInModal" class="space-y-3">
+                <!-- Las tareas del día se listarán aquí -->
+            </div>
+             <p id="noTasksMessage" class="text-center text-gray-500 font-bold mt-4 hidden">No hay tareas añadidas para hoy.</p>
+        </div>
+    </div>
+
+
     <script>
         // Array para almacenar las actividades reutilizables (plantillas)
         let reusableActivities = [];
         // Objeto para almacenar las puntuaciones acumuladas por día
-        // Formato: { 'YYYY-MM-DD': totalScore }
+        // Formato: { 'YYYY-MM-DD': totalScore } - Esto es ahora el total calculado
         let dailyScores = {};
+        // Objeto para almacenar las actividades reales añadidas cada día
+        // Formato: { 'YYYY-MM-DD': [{ name: 'Task', score: 5, emoji: '📚' }, ...] }
+        let dailyActivities = {};
+
 
         // Obtener la fecha actual en formato YYYY-MM-DD
         const today = new Date().toISOString().slice(0, 10);
@@ -126,34 +214,91 @@
         // Referencias a los elementos del DOM
         const activityNameInput = document.getElementById('activityName');
         const activityScoreInput = document.getElementById('activityScore');
-        const activityEmojiInput = document.getElementById('activityEmoji'); // Nuevo input para el emoji
+        const activityEmojiInput = document.getElementById('activityEmoji');
         const addActivityBtn = document.getElementById('addActivityBtn');
         const availableActivitiesListDiv = document.getElementById('availableActivitiesList');
         const dailySummaryDiv = document.getElementById('dailySummary');
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
-        const generateReflectionBtn = document.getElementById('generateReflectionBtn');
-        const reflectionButtonText = document.getElementById('reflectionButtonText');
-        const reflectionLoadingSpinner = document.getElementById('reflectionLoadingSpinner');
-        const dailyReflectionOutput = document.getElementById('dailyReflectionOutput');
 
-        // Nuevas referencias para la sugerencia de actividad LLM
+        // Referencias para la sugerencia de actividad LLM
         const suggestActivityLLMBtn = document.getElementById('suggestActivityLLMBtn');
         const suggestActivityButtonText = document.getElementById('suggestActivityButtonText');
         const suggestActivityLoadingSpinner = document.getElementById('suggestActivityLoadingSpinner');
 
+        // Referencias para la sugerencia de mejoras LLM
+        const suggestImprovementsBtn = document.getElementById('suggestImprovementsBtn');
+        const suggestImprovementsButtonText = document.getElementById('suggestImprovementsButtonText');
+        const suggestImprovementsLoadingSpinner = document.getElementById('suggestImprovementsLoadingSpinner');
+        const dailyImprovementsOutput = document.getElementById('dailyImprovementsOutput');
+        const improvementsList = document.getElementById('improvementsList');
 
-        // Referencias para la funcionalidad colapsable
+
+        // Referencias para la funcionalidad colapsable de Gestionar Actividades
         const toggleCreateActivityForm = document.getElementById('toggleCreateActivityForm');
         const createActivityFormContent = document.getElementById('createActivityFormContent');
         const toggleIcon = document.getElementById('toggleIcon');
+
+        // Nuevas referencias para el apartado de Estadísticas Diarias
+        const toggleStatistics = document.getElementById('toggleStatistics'); // Ahora se usa para el click en los emojis
+        const statisticsContent = document.getElementById('statisticsContent');
+        const statisticsDisplayPanel = document.getElementById('statisticsDisplayPanel');
+        const statisticsToggleIcon = document.getElementById('statisticsToggleIcon'); // El icono sigue siendo el de alternancia
+        const totalPositiveScore = document.getElementById('totalPositiveScore');
+        const totalNegativeScore = document.getElementById('totalNegativeScore');
+        const countPositiveActivities = document.getElementById('countPositiveActivities');
+        const countNegativeActivities = document.getElementById('countNegativeActivities');
+        const countNeutralActivities = document.getElementById('countNeutralActivities');
+        // Nuevas referencias para las barras de conteo de estadísticas
+        const barPositiveCount = document.getElementById('barPositiveCount');
+        const barNegativeCount = document.getElementById('barNegativeCount');
+        const barNeutralCount = document.getElementById('barNeutralCount');
+
+
+        // Referencias para el modal de tareas del día
+        const dailyTasksModal = document.getElementById('dailyTasksModal');
+        const closeDailyTasksModal = document.getElementById('closeDailyTasksModal');
+        const dailyTasksListInModal = document.getElementById('dailyTasksListInModal');
+        const modalTodayDate = document.getElementById('modalTodayDate');
+        const modalDailyScore = document.getElementById('modalDailyScore');
+        const modalPositiveBar = document.getElementById('modalPositiveBar');
+        const modalNegativeBar = document.getElementById('modalNegativeBar');
+        const noTasksMessage = document.getElementById('noTasksMessage');
+
+        // Elementos de la barra vertical principal
+        const todayDateDisplay = document.getElementById('todayDate');
+        const positiveBar = document.getElementById('positiveBar');
+        const negativeBar = document.getElementById('negativeBar');
+
+
+        /**
+         * Mapeo de dígitos a emojis numéricos.
+         */
+        const emojiNumbers = {
+            '0': '0️⃣', '1': '1️⃣', '2': '2️⃣', '3': '3️⃣', '4': '4️⃣',
+            '5': '5️⃣', '6': '6️⃣', '7': '7️⃣', '8': '8️⃣', '9': '9️⃣'
+        };
+
+        /**
+         * Convierte una cadena de fecha YYYY-MM-DD a formato DD/MM/YYYY con emojis.
+         * @param {string} dateString - La fecha en formato YYYY-MM-DD.
+         * @returns {string} La fecha en formato DD/MM/YYYY con emojis.
+         */
+        function formatEmojiDate(dateString) {
+            const [year, month, day] = dateString.split('-');
+            const dayEmoji = day.split('').map(char => emojiNumbers[char] || char).join('');
+            const monthEmoji = month.split('').map(char => emojiNumbers[char] || char).join('');
+            const yearEmoji = year.split('').map(char => emojiNumbers[char] || char).join('');
+
+            return `${dayEmoji}/${monthEmoji}/${yearEmoji}`;
+        }
 
         /**
          * Guarda los datos actuales en localStorage.
          */
         function saveData() {
             localStorage.setItem('reusableActivities', JSON.stringify(reusableActivities));
-            localStorage.setItem('dailyScores', JSON.stringify(dailyScores));
+            localStorage.setItem('dailyActivities', JSON.stringify(dailyActivities)); // Guardar las actividades diarias
         }
 
         /**
@@ -165,15 +310,17 @@
                 reusableActivities = JSON.parse(storedActivities);
             }
 
-            const storedDailyScores = localStorage.getItem('dailyScores');
-            if (storedDailyScores) {
-                dailyScores = JSON.parse(storedDailyScores);
+            const storedDailyActivities = localStorage.getItem('dailyActivities');
+            if (storedDailyActivities) {
+                dailyActivities = JSON.parse(storedDailyActivities);
             }
 
-            // Asegurarse de que la puntuación del día actual esté inicializada
-            if (!dailyScores[today]) {
-                dailyScores[today] = 0;
+            // Asegurarse de que la lista de actividades del día actual esté inicializada
+            if (!dailyActivities[today]) {
+                dailyActivities[today] = [];
             }
+            // Calcular el dailyScores[today] a partir de dailyActivities[today]
+            dailyScores[today] = dailyActivities[today].reduce((sum, activity) => sum + activity.score, 0);
         }
 
         /**
@@ -225,18 +372,18 @@
             availableActivitiesListDiv.innerHTML = ''; // Limpiar la lista actual
 
             if (reusableActivities.length === 0) {
-                availableActivitiesListDiv.innerHTML = '<p class="text-center font-bold text-gray-300">No hay actividades reutilizables. ¡Crea una!</p>';
+                availableActivitiesListDiv.innerHTML = '<p class="text-center font-bold text-gray-700">No hay actividades reutilizables. ¡Crea una!</p>';
                 return;
             }
 
             reusableActivities.forEach((activity, index) => {
                 const activityItem = document.createElement('div');
-                // Usar bg-blue-900 para los elementos de la lista para un contraste sutil con el fondo del módulo
-                activityItem.className = 'flex justify-between items-center p-3 bg-blue-900 rounded-md shadow-sm border border-blue-800 cursor-pointer hover:bg-blue-800 transition duration-150 ease-in-out';
+                // Usar bg-blue-200 para los elementos de la lista para un contraste sutil con el fondo del módulo
+                activityItem.className = 'flex justify-between items-center p-3 bg-blue-200 rounded-md shadow-sm border border-blue-300 cursor-pointer hover:bg-blue-300 transition duration-150 ease-in-out';
                 activityItem.dataset.index = index; // Guardar el índice para acceder a la actividad
                 activityItem.innerHTML = `
-                    <span class="text-md font-bold text-gray-100">${activity.emoji || getDefaultEmoji(activity.score)} ${activity.name}</span>
-                    <span class="text-lg font-bold ${activity.score >= 0 ? 'text-green-400' : 'text-red-400'}">${activity.score}</span>
+                    <span class="text-md font-bold text-gray-800">${activity.emoji || getDefaultEmoji(activity.score)} ${activity.name}</span>
+                    <span class="text-lg font-bold ${activity.score >= 0 ? 'text-green-600' : 'text-red-600'}">${activity.score}</span>
                 `;
                 availableActivitiesListDiv.appendChild(activityItem);
             });
@@ -246,15 +393,11 @@
          * Renderiza el resumen de puntuación para el día actual.
          */
         function renderDailySummary() {
-            dailySummaryDiv.innerHTML = ''; // Limpiar el resumen actual
-
             const currentDayScore = dailyScores[today] || 0; // Obtener la puntuación del día actual, o 0 si no existe
 
-            const dailyItem = document.createElement('div');
-            // Usar bg-blue-900 para el elemento dentro del resumen para un contraste sutil
-            dailyItem.className = 'bg-blue-900 p-4 rounded-lg shadow-sm border border-blue-800 flex flex-col items-center text-gray-100';
+            todayDateDisplay.textContent = formatEmojiDate(today); // Formatear la fecha con emojis
 
-            // Calcular el porcentaje de la barra. El rango total es de -100 a 100.
+            // Calcular el porcentaje de la barra vertical. El rango total es de -100 a 100.
             let positiveHeight = 0;
             let negativeHeight = 0;
 
@@ -264,25 +407,97 @@
                 negativeHeight = (Math.abs(currentDayScore) / 100) * 50; // Max 50% for negative, scaled to 100 max score
             }
 
-            dailyItem.innerHTML = `
-                <div class="flex justify-between items-center mb-2 w-full">
-                    <h3 class="text-lg font-bold text-gray-100">Puntuación de Hoy (${today})</h3>
-                    <span class="text-2xl font-bold ${currentDayScore >= 0 ? 'text-green-400' : 'text-red-400'}">${currentDayScore}</span>
-                </div>
-                <!-- Contenedor de la barra de puntuación vertical con diseño mejorado (más gorda y redonda) -->
-                <div class="w-20 h-80 bg-gray-700 rounded-full flex flex-col relative overflow-hidden shadow-inner mx-auto mt-4">
-                    <!-- Barra positiva (verde) con degradado - crece hacia arriba desde el centro -->
-                    <div class="absolute bottom-1/2 left-0 right-0 bg-gradient-to-t from-green-400 to-green-600 rounded-t-full transition-all duration-300 ease-in-out"
-                         style="height: ${positiveHeight}%;"></div>
-                    <!-- Barra negativa (roja) con degradado - crece hacia abajo desde el centro -->
-                    <div class="absolute top-1/2 left-0 right-0 bg-gradient-to-b from-red-600 to-red-400 rounded-b-full transition-all duration-300 ease-in-out"
-                         style="height: ${negativeHeight}%;"></div>
-                    <!-- Línea central para claridad visual -->
-                    <div class="absolute left-0 right-0 top-1/2 transform -translate-y-1/2 h-0.5 bg-gray-400 z-10"></div>
-                </div>
-            `;
-            dailySummaryDiv.appendChild(dailyItem);
+            positiveBar.style.height = `${positiveHeight}%`;
+            negativeBar.style.height = `${negativeHeight}%`;
+
+            // También actualizamos las estadísticas en el nuevo módulo
+            renderStatistics();
         }
+
+        /**
+         * Renderiza la lista de tareas del día en el modal.
+         */
+        function renderDailyTaskListModal() {
+            dailyTasksListInModal.innerHTML = ''; // Limpiar la lista actual
+            const tasks = dailyActivities[today] || [];
+            let modalCurrentDayScore = 0;
+
+            modalTodayDate.textContent = formatEmojiDate(today); // Formatear la fecha con emojis en el modal
+
+            if (tasks.length === 0) {
+                noTasksMessage.classList.remove('hidden');
+            } else {
+                noTasksMessage.classList.add('hidden');
+                tasks.forEach((task) => {
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'flex justify-between items-center p-3 bg-gray-100 rounded-md shadow-sm border border-gray-200 text-gray-800';
+                    taskItem.innerHTML = `
+                        <span class="text-md font-bold">${task.emoji || getDefaultEmoji(task.score)} ${task.name}</span>
+                        <span class="text-lg font-bold ${task.score >= 0 ? 'text-green-600' : 'text-red-600'}">${task.score}</span>
+                    `;
+                    dailyTasksListInModal.appendChild(taskItem);
+                    modalCurrentDayScore += task.score;
+                });
+            }
+
+            modalDailyScore.textContent = modalCurrentDayScore;
+            modalDailyScore.classList.toggle('text-green-600', modalCurrentDayScore >= 0);
+            modalDailyScore.classList.toggle('text-red-600', modalCurrentDayScore < 0);
+
+            // Actualizar la barra horizontal del modal
+            let modalPositiveWidth = 0;
+            let modalNegativeWidth = 0;
+            let modalNegativeLeft = 50;
+
+            if (modalCurrentDayScore > 0) {
+                modalPositiveWidth = (modalCurrentDayScore / 100) * 50;
+            } else if (modalCurrentDayScore < 0) {
+                modalNegativeWidth = (Math.abs(modalCurrentDayScore) / 100) * 50;
+                modalNegativeLeft = 50 - modalNegativeWidth;
+            }
+
+            modalPositiveBar.style.width = `${modalPositiveWidth}%`;
+            modalNegativeBar.style.width = `${modalNegativeWidth}%`;
+            modalNegativeBar.style.left = `${modalNegativeLeft}%`;
+            modalPositiveBar.style.left = `50%`; // Asegurar que la barra positiva siempre empieza en el centro
+        }
+
+        /**
+         * Calcula y renderiza las estadísticas diarias.
+         */
+        function renderStatistics() {
+            const tasks = dailyActivities[today] || [];
+            let posScore = 0;
+            let negScore = 0;
+            let posCount = 0;
+            let negCount = 0;
+            let neutralCount = 0;
+
+            tasks.forEach(task => {
+                if (task.score > 0) {
+                    posScore += task.score;
+                    posCount++;
+                } else if (task.score < 0) {
+                    negScore += task.score;
+                    negCount++;
+                } else {
+                    neutralCount++;
+                }
+            });
+
+            totalPositiveScore.textContent = posScore;
+            totalNegativeScore.textContent = negScore;
+            countPositiveActivities.textContent = posCount;
+            countNegativeActivities.textContent = negCount;
+            countNeutralActivities.textContent = neutralCount;
+
+            // Actualizar las tres barras de conteo de actividades
+            const maxCount = Math.max(posCount, negCount, neutralCount, 1); // Asegurar que no dividimos por cero
+            barPositiveCount.style.width = `${(posCount / maxCount) * 100}%`;
+            barNegativeCount.style.width = `${(negCount / maxCount) * 100}%`;
+            barNeutralCount.style.width = `${(neutralCount / maxCount) * 100}%`;
+        }
+
 
         /**
          * Maneja el evento de añadir una nueva actividad reutilizable.
@@ -320,73 +535,26 @@
                 const activity = reusableActivities[index];
 
                 if (activity) {
-                    dailyScores[today] += activity.score;
+                    // Añadir la actividad a la lista de actividades del día
+                    if (!dailyActivities[today]) {
+                        dailyActivities[today] = [];
+                    }
+                    dailyActivities[today].push(activity);
+
+                    // Recalcular la puntuación total del día
+                    dailyScores[today] = dailyActivities[today].reduce((sum, act) => sum + act.score, 0);
                     // Asegurarse de que el score no exceda los límites de -100 a 100
                     dailyScores[today] = Math.max(-100, Math.min(100, dailyScores[today]));
+
                     saveData(); // Guardar los datos
-                    renderDailySummary(); // Actualizar el resumen del día
-                    dailyReflectionOutput.classList.add('hidden'); // Ocultar reflexión anterior
+                    renderDailySummary(); // Actualizar el resumen del día principal
+                    dailyImprovementsOutput.classList.add('hidden'); // Ocultar sugerencias anteriores
                 }
             }
         });
 
         /**
-         * Genera una reflexión diaria usando la API de Gemini.
-         */
-        generateReflectionBtn.addEventListener('click', async () => {
-            const currentDayScore = dailyScores[today] || 0;
-
-            // Mostrar spinner y deshabilitar botón
-            reflectionButtonText.textContent = 'Generando...';
-            reflectionLoadingSpinner.classList.remove('hidden');
-            generateReflectionBtn.disabled = true;
-            dailyReflectionOutput.classList.add('hidden'); // Ocultar salida anterior
-
-            try {
-                let chatHistory = [];
-                const prompt = `Eres un asistente motivacional y reflexivo. Basado en la puntuación diaria de actividades de hoy, que es ${currentDayScore}, proporciona una breve reflexión o consejo.
-Si la puntuación es positiva, celebra el progreso y sugiere cómo mantenerlo.
-Si la puntuación es negativa, ofrece ánimo y consejos constructivos para mejorar.
-Si la puntuación es cero, sugiere formas de encontrar motivación o nuevas actividades.
-Mantén la respuesta concisa y en español.`;
-
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                const payload = { contents: chatHistory };
-                const apiKey = ""; // La clave API será proporcionada por el entorno de Canvas
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const reflectionText = result.candidates[0].content.parts[0].text;
-                    dailyReflectionOutput.textContent = reflectionText;
-                    dailyReflectionOutput.classList.remove('hidden');
-                } else {
-                    dailyReflectionOutput.textContent = 'No se pudo generar la reflexión. Inténtalo de nuevo.';
-                    dailyReflectionOutput.classList.add('hidden');
-                }
-            } catch (error) {
-                console.error('Error al generar la reflexión:', error);
-                dailyReflectionOutput.textContent = 'Error al conectar con el servicio de reflexión. Por favor, inténtalo más tarde.';
-                dailyReflectionOutput.classList.add('hidden');
-            } finally {
-                // Ocultar spinner y habilitar botón
-                reflectionButtonText.textContent = 'Generar Reflexión Diaria ✨';
-                reflectionLoadingSpinner.classList.add('hidden');
-                generateReflectionBtn.disabled = false;
-            }
-        });
-
-        /**
-         * Genera una sugerencia de actividad usando la API de Gemini.
+         * Genera una sugerencia de actividad usando la API de Gemini para rellenar el formulario.
          */
         suggestActivityLLMBtn.addEventListener('click', async () => {
             // Mostrar spinner y deshabilitar botón
@@ -446,6 +614,93 @@ Mantén la respuesta concisa y en español.`;
             }
         });
 
+        /**
+         * Genera sugerencias de mejora para el día siguiente usando la API de Gemini.
+         */
+        suggestImprovementsBtn.addEventListener('click', async () => {
+            const currentDayScore = dailyScores[today] || 0;
+            const activitiesToday = dailyActivities[today] || [];
+
+            // Mostrar spinner y deshabilitar botón
+            suggestImprovementsButtonText.textContent = 'Sugiriendo Mejoras...';
+            suggestImprovementsLoadingSpinner.classList.remove('hidden');
+            suggestImprovementsBtn.disabled = true;
+            dailyImprovementsOutput.classList.add('hidden'); // Ocultar salida anterior
+
+            try {
+                let chatHistory = [];
+                const prompt = `Eres un asistente de planificación de actividades. Basándote en la puntuación total de actividades de hoy, que es ${currentDayScore}, y las actividades realizadas hoy: ${JSON.stringify(activitiesToday)}.
+                Sugiere 3-5 actividades específicas para mañana que podrían ayudar a mejorar tu balance general o a abordar áreas débiles.
+                Para cada sugerencia, incluye un 'name' (string), una 'score' (integer entre -10 y 10), y un 'emoji' (string, opcional, máximo 2 caracteres).
+                Responde en formato JSON como un array de objetos. Por ejemplo:
+                [
+                  {"name": "Hacer ejercicio ligero", "score": 7, "emoji": "🏋️"},
+                  {"name": "Aprender algo nuevo", "score": 8, "emoji": "🧠"}
+                ]`;
+
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = {
+                    contents: chatHistory,
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "ARRAY",
+                            items: {
+                                type: "OBJECT",
+                                properties: {
+                                    "name": { "type": "STRING" },
+                                    "score": { "type": "NUMBER", "minimum": -10, "maximum": 10 },
+                                    "emoji": { "type": "STRING", "maxLength": 2, "description": "Optional emoji for the activity" }
+                                },
+                                "required": ["name", "score"]
+                            }
+                        }
+                    }
+                };
+                const apiKey = ""; // La clave API será proporcionada por el entorno de Canvas
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const suggestedImprovements = JSON.parse(result.candidates[0].content.parts[0].text);
+                    improvementsList.innerHTML = ''; // Limpiar lista anterior
+                    if (suggestedImprovements.length > 0) {
+                        suggestedImprovements.forEach(suggestion => {
+                            const listItem = document.createElement('li');
+                            listItem.className = `text-gray-700 font-bold`; // Adjusted text color for light background
+                            listItem.innerHTML = `${suggestion.emoji || getDefaultEmoji(suggestion.score)} ${suggestion.name} (${suggestion.score})`;
+                            improvementsList.appendChild(listItem);
+                        });
+                        dailyImprovementsOutput.classList.remove('hidden');
+                    } else {
+                        dailyImprovementsOutput.textContent = 'No se pudieron generar sugerencias de mejora.';
+                        dailyImprovementsOutput.classList.remove('hidden');
+                    }
+                } else {
+                    dailyImprovementsOutput.textContent = 'No se pudieron generar sugerencias de mejora. Inténtalo de nuevo.';
+                    dailyImprovementsOutput.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error al generar sugerencias de mejora:', error);
+                dailyImprovementsOutput.textContent = 'Error al conectar con el servicio de sugerencias de mejora. Por favor, inténtalo más tarde.';
+                dailyImprovementsOutput.classList.remove('hidden');
+            } finally {
+                // Ocultar spinner y habilitar botón
+                suggestImprovementsButtonText.textContent = 'Sugerir Mejoras para Mañana ✨';
+                suggestImprovementsLoadingSpinner.classList.add('hidden');
+                suggestImprovementsBtn.disabled = false;
+            }
+        });
+
         // Funcionalidad para colapsar/expandir el formulario de crear actividad
         toggleCreateActivityForm.addEventListener('click', () => {
             createActivityFormContent.classList.toggle('hidden');
@@ -456,12 +711,44 @@ Mantén la respuesta concisa y en español.`;
             }
         });
 
+        // Funcionalidad para colapsar/expandir el apartado de Estadísticas Diarias
+        toggleStatistics.addEventListener('click', () => {
+            statisticsContent.classList.toggle('hidden');
+            if (statisticsContent.classList.contains('hidden')) {
+                statisticsToggleIcon.textContent = '+';
+            } else {
+                statisticsToggleIcon.textContent = '-';
+                renderStatistics(); // Renderizar estadísticas cada vez que se abre
+            }
+        });
+
+
+        // Event listeners para el modal de tareas del día
+        // showDailyTasksBtn.addEventListener('click', () => { // Eliminado el event listener
+        //     renderDailyTaskListModal(); // Renderizar antes de mostrar
+        //     dailyTasksModal.classList.remove('hidden');
+        // });
+
+        closeDailyTasksModal.addEventListener('click', () => {
+            dailyTasksModal.classList.add('hidden');
+        });
+
+        // Cerrar modal al hacer clic fuera de él
+        dailyTasksModal.addEventListener('click', (event) => {
+            if (event.target === dailyTasksModal) {
+                dailyTasksModal.classList.add('hidden');
+            }
+        });
+
 
         // Renderizar las actividades disponibles y el resumen diario al cargar la página por primera vez
         document.addEventListener('DOMContentLoaded', () => {
             loadData(); // Cargar datos al inicio
             renderAvailableActivities();
             renderDailySummary();
+            // Asegurarse de que el contenido de estadísticas esté oculto por defecto
+            statisticsContent.classList.add('hidden');
+            statisticsToggleIcon.textContent = '+'; // Asegurarse de que el icono sea '+' al inicio
         });
     </script>
 </body>
