@@ -1,0 +1,390 @@
+import React, { useState, useEffect } from 'react';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
+import {
+  getFirestore,
+  collection,
+  query,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from 'firebase/firestore';
+
+// Lucide React icons (assuming these are available in the environment)
+const Plus = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 5v14M5 12h14"/></svg>;
+const Trash2 = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6"/></svg>;
+const ChevronDown = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m6 9 6 6 6-6"/></svg>;
+const ChevronUp = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m18 15-6-6-6 6"/></svg>;
+
+
+// Global variables for Firebase configuration and app ID
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+function App() {
+  const [db, setDb] = useState(null);
+  const [auth, setAuth] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [people, setPeople] = useState([]);
+  const [newName, setNewName] = useState('');
+  const [newCategory, setNewCategory] = useState('Protagonistas');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  // State to manage the open/closed status of each category
+  const [openCategories, setOpenCategories] = useState({
+    Protagonistas: false, // Changed to false to be initially closed
+    Secundarios: false, // Changed to false to be initially closed
+    Relleno: false,     // Changed to false to be initially closed
+  });
+
+  // Initialize Firebase and set up authentication
+  useEffect(() => {
+    try {
+      const app = initializeApp(firebaseConfig);
+      const firestore = getFirestore(app);
+      const firebaseAuth = getAuth(app);
+      setDb(firestore);
+      setAuth(firebaseAuth);
+
+      const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
+        if (user) {
+          setUserId(user.uid);
+          setLoading(false);
+        } else {
+          // Sign in anonymously if no initial auth token, otherwise use the token
+          try {
+            if (initialAuthToken) {
+              await signInWithCustomToken(firebaseAuth, initialAuthToken);
+            } else {
+              await signInAnonymously(firebaseAuth);
+            }
+          } catch (authError) {
+            console.error('Error during authentication:', authError);
+            setError('Error de autenticación. Por favor, inténtalo de nuevo.');
+            setLoading(false);
+          }
+        }
+      });
+
+      return () => unsubscribe();
+    } catch (initError) {
+      console.error('Error initializing Firebase:', initError);
+      setError('Error al inicializar la aplicación. Por favor, inténtalo de nuevo.');
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch and listen for real-time updates to people data
+  useEffect(() => {
+    if (db && userId) {
+      const peopleCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/debts`);
+      const q = query(peopleCollectionRef);
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const peopleData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        // Sort by category importance: Protagonistas, Secundarios, Relleno
+        peopleData.sort((a, b) => {
+          const categoryOrder = { Protagonistas: 3, Secundarios: 2, Relleno: 1 };
+          return categoryOrder[b.category] - categoryOrder[a.category];
+        });
+        setPeople(peopleData);
+        setLoading(false);
+      }, (err) => {
+        console.error('Error fetching people data:', err);
+        setError('Error al cargar los datos de las deudas.');
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    }
+  }, [db, userId]);
+
+  // Function to show a custom modal message
+  const showCustomModal = (message) => {
+    setModalMessage(message);
+    setShowModal(true);
+  };
+
+  // Add a new person to Firestore
+  const addPerson = async () => {
+    if (!newName.trim() || !userId) {
+      showCustomModal('Por favor, introduce un nombre para la persona.');
+      return;
+    }
+    try {
+      await addDoc(collection(db, `artifacts/${appId}/users/${userId}/debts`), {
+        name: newName.trim(),
+        category: newCategory,
+        balance: 0, // Initialize balance directly
+        userId: userId, // Store userId for security rules
+      });
+      setNewName('');
+      setNewCategory('Protagonistas');
+    } catch (e) {
+      console.error('Error adding document: ', e);
+      showCustomModal('Error al añadir la persona. Por favor, inténtalo de nuevo.');
+    }
+  };
+
+  // Update debt amounts for a person (now directly updates balance)
+  const updateBalance = async (personId, amount) => {
+    if (!db || !userId) return;
+    const personRef = doc(db, `artifacts/${appId}/users/${userId}/debts`, personId);
+    try {
+      const currentPerson = people.find((p) => p.id === personId);
+      if (currentPerson) {
+        const newBalance = currentPerson.balance + amount;
+        await updateDoc(personRef, {
+          balance: newBalance,
+        });
+      }
+    } catch (e) {
+      console.error('Error updating document: ', e);
+      showCustomModal('Error al actualizar la deuda. Por favor, inténtalo de nuevo.');
+    }
+  };
+
+  // Delete a person from Firestore
+  const deletePerson = async (personId) => {
+    if (!db || !userId) return;
+    try {
+      await deleteDoc(doc(db, `artifacts/${appId}/users/${userId}/debts`, personId));
+    } catch (e) {
+      console.error('Error deleting document: ', e);
+      showCustomModal('Error al eliminar la persona. Por favor, inténtalo de nuevo.');
+    }
+  };
+
+  // Toggle category visibility
+  const toggleCategory = (category) => {
+    setOpenCategories((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
+  };
+
+  // Define category colors and emojis
+  const categoryStyles = {
+    Protagonistas: {
+      bgColor: 'bg-[#C6C7F8] dark:bg-purple-800', // Lavanda más sobrio
+      textColor: 'text-[#34495E] dark:text-purple-200', // Texto principal
+      borderColor: 'border-[#DDE4EA] dark:border-purple-600', // Borde gris claro
+      emoji: '🌟',
+    },
+    Secundarios: {
+      bgColor: 'bg-[#A9D5FF] dark:bg-blue-800', // Azul suave
+      textColor: 'text-[#34495E] dark:text-blue-200', // Texto principal
+      borderColor: 'border-[#DDE4EA] dark:border-blue-600', // Borde gris claro
+      emoji: '🤝',
+    },
+    Relleno: {
+      bgColor: 'bg-[#B7EAC5] dark:bg-green-800', // Verde menta frío
+      textColor: 'text-[#34495E] dark:text-green-200', // Texto principal
+      borderColor: 'border-[#DDE4EA] dark:border-green-600', // Borde gris claro
+      emoji: '👥',
+    },
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-inter">
+        <p>Cargando aplicación...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-red-600 font-inter">
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  // Group people by category
+  const peopleByCategory = people.reduce((acc, person) => {
+    acc[person.category] = acc[person.category] || [];
+    acc[person.category].push(person);
+    return acc;
+  }, {});
+
+  const orderedCategories = ['Protagonistas', 'Secundarios', 'Relleno'];
+
+  return (
+    <div className="min-h-screen bg-[#F4F8FB] dark:bg-gray-950 text-[#34495E] dark:text-gray-100 font-inter p-4 sm:p-6 lg:p-8 rounded-lg shadow-xl">
+      <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-lg border border-[#DDE4EA] dark:border-gray-700">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6 text-[#2E2E2E] dark:text-indigo-400">
+          💰 BILLCOLLECTOR 🧾
+        </h1>
+
+        {/* Add New Person Form */}
+        <div className="mb-8 p-6 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-[#DDE4EA] dark:border-[#7E8FF1]">
+          <h2 className="text-2xl font-semibold mb-4 text-[#34495E] dark:text-[#AAB8C2] flex items-center gap-2">
+            ➕ Añadir Nueva Persona
+          </h2>
+          <div className="flex flex-col sm:flex-row gap-4 items-end">
+            <div className="flex-grow">
+              <label htmlFor="personName" className="block text-sm font-medium text-[#6C7A89] dark:text-gray-300 mb-1">
+                Nombre:
+              </label>
+              <input
+                id="personName"
+                type="text"
+                placeholder="Ej: Juan Pérez"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="w-full p-3 rounded-md border border-[#AAB8C2] dark:border-gray-600 bg-white dark:bg-gray-800 text-[#2E2E2E] dark:text-gray-100 focus:ring-2 focus:ring-[#7E8FF1] focus:border-transparent transition duration-200 ease-in-out"
+              />
+            </div>
+            <div className="flex-grow">
+              <label htmlFor="personCategory" className="block text-sm font-medium text-[#6C7A89] dark:text-gray-300 mb-1">
+                Categoría:
+              </label>
+              <select
+                id="personCategory"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                className="w-full p-3 rounded-md border border-[#AAB8C2] dark:border-gray-600 bg-white dark:bg-gray-800 text-[#2E2E2E] dark:text-gray-100 focus:ring-2 focus:ring-[#7E8FF1] focus:border-transparent transition duration-200 ease-in-out"
+              >
+                <option value="Protagonistas">{categoryStyles.Protagonistas.emoji} Protagonistas</option>
+                <option value="Secundarios">{categoryStyles.Secundarios.emoji} Secundarios</option>
+                <option value="Relleno">{categoryStyles.Relleno.emoji} Relleno</option>
+              </select>
+            </div>
+            <button
+              onClick={addPerson}
+              className="bg-[#3366CC] hover:bg-[#254AA5] text-white font-bold py-3 px-6 rounded-md shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#7E8FF1] focus:ring-offset-2 dark:focus:ring-offset-gray-800 flex items-center gap-2"
+            >
+              <Plus className="w-5 h-5" /> Añadir Persona
+            </button>
+          </div>
+        </div>
+
+        {/* People List by Category */}
+        <div>
+          {orderedCategories.map((category) => {
+            const peopleInThisCategory = peopleByCategory[category] || [];
+            const { bgColor, textColor, borderColor, emoji } = categoryStyles[category];
+
+            return (
+              <div key={category} className={`mb-6 p-4 rounded-lg shadow-lg border ${borderColor}`}>
+                <button
+                  onClick={() => toggleCategory(category)}
+                  className={`w-full flex justify-between items-center p-3 rounded-md ${textColor} font-bold text-xl cursor-pointer hover:opacity-80 transition-opacity duration-200 ${bgColor}`}
+                >
+                  <span>{emoji} {category} ({peopleInThisCategory.length})</span>
+                  {openCategories[category] ? (
+                    <ChevronUp className="w-6 h-6" />
+                  ) : (
+                    <ChevronDown className="w-6 h-6" />
+                  )}
+                </button>
+
+                {openCategories[category] && (
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {peopleInThisCategory.length === 0 ? (
+                      <p className="col-span-full text-center text-[#6C7A89] dark:text-gray-400 mt-2">
+                        No hay personas en esta categoría.
+                      </p>
+                    ) : (
+                      peopleInThisCategory.map((person) => (
+                        <div
+                          key={person.id}
+                          className="bg-white dark:bg-gray-700 p-5 rounded-lg shadow-lg border border-[#DDE4EA] dark:border-gray-600 transform transition duration-300 hover:scale-[1.02]"
+                        >
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <h3 className="text-xl font-bold text-[#34495E] dark:text-indigo-300">{person.name}</h3>
+                            </div>
+                            <button
+                              onClick={() => deletePerson(person.id)}
+                              className="text-red-500 hover:text-red-700 transition duration-200 ease-in-out p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900"
+                              title="Eliminar persona"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </div>
+
+                          <div className="mb-4">
+                            <p className="text-[#34495E] dark:text-gray-200">
+                              Balance actual:{" "}
+                              <span
+                                className={
+                                  person.balance >= 0 ? "font-semibold text-green-600 dark:text-green-400" : "font-semibold text-red-600 dark:text-red-400"
+                                }
+                              >
+                                ${person.balance.toFixed(2)}
+                              </span>
+                            </p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <input
+                                id={`balanceInput-${person.id}`}
+                                type="number"
+                                placeholder="Cantidad (+/-)"
+                                className="w-32 p-2 rounded-md border border-[#AAB8C2] dark:border-gray-600 bg-white dark:bg-gray-800 text-[#2E2E2E] dark:text-gray-100 focus:ring-1 focus:ring-[#7E8FF1]"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    const value = parseFloat(e.target.value);
+                                    if (!isNaN(value) && value !== 0) {
+                                      updateBalance(person.id, value);
+                                      e.target.value = ''; // Clear input after adding
+                                    }
+                                  }
+                                }}
+                              />
+                              <button
+                                onClick={() => {
+                                  const input = document.querySelector(`#balanceInput-${person.id}`);
+                                  const value = parseFloat(input.value);
+                                  if (!isNaN(value) && value !== 0) {
+                                    updateBalance(person.id, value);
+                                    input.value = '';
+                                  } else if (isNaN(value)) {
+                                    showCustomModal('Por favor, introduce un número válido.');
+                                  }
+                                }}
+                                className="bg-[#7E8FF1] hover:bg-indigo-500 text-white p-2 rounded-full shadow-sm flex items-center justify-center"
+                                title="Actualizar Balance"
+                              >
+                                <Plus className="w-5 h-5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Custom Modal */}
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+              <p className="text-lg font-semibold mb-4 text-[#34495E] dark:text-gray-100">{modalMessage}</p>
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-[#7E8FF1] hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-md transition duration-300 ease-in-out"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App;
