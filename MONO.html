@@ -28,13 +28,13 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+<body class="bg-sky-50 min-h-screen flex items-center justify-center p-4">
     <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-5xl flex flex-col lg:flex-row gap-6">
         <!-- Columna Izquierda: Gestionar Actividades (Colapsable) -->
         <div class="flex-1 p-4 border border-gray-200 rounded-xl polished-module text-gray-700">
             <div class="flex justify-between items-center mb-4 cursor-pointer" id="toggleCreateActivityForm">
                 <h2 class="text-xl font-bold text-gray-800">Gestionar Actividades</h2>
-                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold transition-transform duration-300 transform">
+                <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-2xl font-bold transition-transform duration-300 transform">
                     <span id="toggleIcon">+</span>
                 </div>
             </div>
@@ -43,26 +43,26 @@
                 <div class="mb-4">
                     <label for="activityName" class="block text-sm font-bold text-gray-700 mb-1">Nombre de la Actividad</label>
                     <input type="text" id="activityName" placeholder="Ej. Tarea de Matemáticas"
-                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-800 font-bold"
+                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800 font-bold"
                            required>
                 </div>
                 <div class="mb-4">
                     <label for="activityScore" class="block text-sm font-bold text-gray-700 mb-1">Puntuación (-10 a 10)</label>
                     <input type="number" id="activityScore" min="-10" max="10" value="0"
-                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-800 font-bold"
+                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800 font-bold"
                            required>
                 </div>
                 <div class="mb-4">
                     <label for="activityEmoji" class="block text-sm font-bold text-gray-700 mb-1">Emoji (opcional)</label>
                     <input type="text" id="activityEmoji" placeholder="Ej. 📚, 🏃‍♂️, 😴" maxlength="2"
-                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white text-gray-800 font-bold">
+                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800 font-bold">
                 </div>
                 <button id="addActivityBtn"
-                        class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold">
+                        class="w-full bg-teal-600 text-white py-2 px-4 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold">
                     Añadir Actividad
                 </button>
                 <button id="suggestActivityLLMBtn"
-                        class="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold flex items-center justify-center">
+                        class="w-full mt-4 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold flex items-center justify-center">
                     <span id="suggestActivityButtonText">Sugerir Actividad ✨</span>
                     <svg id="suggestActivityLoadingSpinner" class="animate-spin h-5 w-5 text-white ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -85,16 +85,18 @@
             <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Resumen Diario</h2>
             <div id="dailySummary" class="flex flex-col items-center space-y-4 w-full">
                 <!-- El resumen del día actual se renderizará aquí -->
-                <div class="flex justify-center items-center mb-2 w-full">
-                    <h3 class="text-lg font-bold text-gray-800"><span id="todayDate"></span></h3>
+                <!-- Make this div clickable to open the modal -->
+                <div id="dailySummaryHeader" class="flex flex-col justify-center items-center mb-2 w-full cursor-pointer hover:bg-sky-100 p-2 rounded-md transition-colors duration-150">
+                    <h3 class="text-lg font-bold text-gray-800">Fecha: <span id="todayDate"></span></h3>
+                    <p class="text-xl font-bold text-gray-800">Total: <span id="mainDailyScore" class="text-teal-600">0</span></p>
                 </div>
                 <!-- Contenedor de la barra de puntuación vertical con diseño mejorado (más gorda y redonda) -->
-                <div class="w-20 h-80 bg-gray-300 rounded-full flex flex-col relative overflow-hidden shadow-inner mx-auto mt-4">
+                <div class="w-20 h-80 bg-gray-200 rounded-full flex flex-col relative overflow-hidden shadow-inner mx-auto mt-4">
                     <!-- Barra positiva (verde) con degradado - crece hacia arriba desde el centro -->
-                    <div id="positiveBar" class="absolute bottom-1/2 left-0 right-0 bg-gradient-to-t from-green-400 to-green-600 rounded-t-full transition-all duration-300 ease-in-out"
+                    <div id="positiveBar" class="absolute bottom-1/2 left-0 right-0 bg-gradient-to-t from-teal-400 to-teal-600 rounded-t-full transition-all duration-300 ease-in-out"
                          style="height: 0%;"></div>
                     <!-- Barra negativa (roja) con degradado - crece hacia abajo desde el centro -->
-                    <div id="negativeBar" class="absolute top-1/2 left-0 right-0 bg-gradient-to-b from-red-600 to-red-400 rounded-b-full transition-all duration-300 ease-in-out"
+                    <div id="negativeBar" class="absolute top-1/2 left-0 right-0 bg-gradient-to-b from-rose-600 to-rose-400 rounded-b-full transition-all duration-300 ease-in-out"
                          style="height: 0%;"></div>
                     <!-- Línea central para claridad visual -->
                     <div class="absolute left-0 right-0 top-1/2 transform -translate-y-1/2 h-0.5 bg-gray-400 z-10"></div>
@@ -102,10 +104,10 @@
             </div>
 
             <!-- Nuevo apartado de Estadísticas Diarias (Colapsable por Emojis) -->
-            <div class="w-full mt-6 p-4 border border-gray-200 rounded-xl bg-gray-100 text-gray-700">
+            <div class="w-full mt-6 p-4 border border-gray-200 rounded-xl bg-sky-100 text-gray-700">
                 <div class="flex justify-between items-center mb-4 cursor-pointer" id="toggleStatistics">
                     <h2 class="text-xl font-bold text-gray-800">📊📉📈</h2>
-                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold transition-transform duration-300 transform">
+                    <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-2xl font-bold transition-transform duration-300 transform">
                         <span id="statisticsToggleIcon">+</span>
                     </div>
                 </div>
@@ -114,8 +116,8 @@
                     <div id="statisticsDisplayPanel" class="bg-white p-6 rounded-lg shadow-xl border border-gray-200">
                         <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Estadísticas Detalladas</h3>
                         <div class="mb-4">
-                            <p class="font-bold text-lg text-gray-700">Total Positivo: <span id="totalPositiveScore" class="text-green-600">0</span></p>
-                            <p class="font-bold text-lg text-gray-700">Total Negativo: <span id="totalNegativeScore" class="text-red-600">0</span></p>
+                            <p class="font-bold text-lg text-gray-700">Total Positivo: <span id="totalPositiveScore" class="text-teal-600">0</span></p>
+                            <p class="font-bold text-lg text-gray-700">Total Negativo: <span id="totalNegativeScore" class="text-rose-600">0</span></p>
                         </div>
                         <div class="mb-4">
                             <p class="font-bold text-gray-700">Actividades Positivas: <span id="countPositiveActivities">0</span></p>
@@ -125,21 +127,21 @@
                         <!-- Tres barras pequeñas para representar el conteo de actividades -->
                         <div class="flex flex-col items-start space-y-2 mt-4">
                             <div class="flex items-center w-full">
-                                <span class="text-green-600 font-bold mr-2">Positivas:</span>
+                                <span class="text-teal-600 font-bold mr-2">Positivas:</span>
                                 <div class="h-4 bg-gray-300 rounded-full flex-grow overflow-hidden shadow-inner">
-                                    <div id="barPositiveCount" class="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full" style="width: 0%;"></div>
+                                    <div id="barPositiveCount" class="h-full bg-gradient-to-r from-teal-400 to-teal-600 rounded-full" style="width: 0%;"></div>
                                 </div>
                             </div>
                             <div class="flex items-center w-full">
-                                <span class="text-red-600 font-bold mr-2">Negativas:</span>
+                                <span class="text-rose-600 font-bold mr-2">Negativas:</span>
                                 <div class="h-4 bg-gray-300 rounded-full flex-grow overflow-hidden shadow-inner">
-                                    <div id="barNegativeCount" class="h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full" style="width: 0%;"></div>
+                                    <div id="barNegativeCount" class="h-full bg-gradient-to-r from-rose-600 to-rose-400 rounded-full" style="width: 0%;"></div>
                                 </div>
                             </div>
                             <div class="flex items-center w-full">
-                                <span class="text-blue-600 font-bold mr-2">Neutrales:</span>
+                                <span class="text-indigo-600 font-bold mr-2">Neutrales:</span>
                                 <div class="h-4 bg-gray-300 rounded-full flex-grow overflow-hidden shadow-inner">
-                                    <div id="barNeutralCount" class="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full" style="width: 0%;"></div>
+                                    <div id="barNeutralCount" class="h-full bg-gradient-to-r from-indigo-400 to-indigo-600 rounded-full" style="width: 0%;"></div>
                                 </div>
                             </div>
                         </div>
@@ -148,16 +150,32 @@
             </div>
 
              <button id="suggestImprovementsBtn"
-                    class="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold flex items-center justify-center">
-                <span id="suggestImprovementsButtonText">Sugerir Mejoras para Mañana ✨</span>
-                <svg id="suggestImprovementsLoadingSpinner" class="animate-spin h-5 w-5 text-white ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </button>
-            <div id="dailyImprovementsOutput" class="mt-4 p-3 bg-blue-200 rounded-lg shadow-sm border border-blue-300 text-gray-700 text-sm hidden w-full font-bold">
-                <h4 class="text-lg font-bold mb-2">Sugerencias para Mañana:</h4>
-                <ul id="improvementsList" class="list-disc pl-5 space-y-1"></ul>
+                     class="w-full mt-4 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md font-bold flex items-center justify-center">
+                 <span id="suggestImprovementsButtonText">Sugerir Mejoras para Mañana ✨</span>
+                 <svg id="suggestImprovementsLoadingSpinner" class="animate-spin h-5 w-5 text-white ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                 </svg>
+             </button>
+             <div id="dailyImprovementsOutput" class="mt-4 p-3 bg-sky-100 rounded-lg shadow-sm border border-sky-200 text-gray-700 text-sm hidden w-full font-bold">
+                 <h4 class="text-lg font-bold mb-2">Sugerencias para Mañana:</h4>
+                 <ul id="improvementsList" class="list-disc pl-5 space-y-1"></ul>
+             </div>
+
+            <!-- Nuevo apartado: Registro Diario (Historial) -->
+            <div class="w-full mt-6 p-4 border border-gray-200 rounded-xl bg-sky-100 text-gray-700">
+                <div class="flex justify-between items-center mb-4 cursor-pointer" id="toggleDailyLog">
+                    <h2 class="text-xl font-bold text-gray-800">Registro Diario 🗓️</h2>
+                    <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-2xl font-bold transition-transform duration-300 transform">
+                        <span id="dailyLogToggleIcon">+</span>
+                    </div>
+                </div>
+                <div id="dailyLogContent" class="space-y-3 hidden">
+                    <div id="dailyLogList" class="space-y-2">
+                        <!-- Las entradas del registro diario se renderizarán aquí -->
+                    </div>
+                    <p id="noLogEntriesMessage" class="text-center text-gray-500 font-bold mt-4 hidden">No hay registros diarios anteriores.</p>
+                </div>
             </div>
         </div>
 
@@ -181,9 +199,9 @@
 
             <!-- Barra de progreso horizontal para el total del día en el modal -->
             <div class="w-full h-6 bg-gray-300 rounded-full flex relative overflow-hidden shadow-inner mb-4">
-                <div id="modalPositiveBar" class="absolute h-full bg-gradient-to-r from-green-400 to-green-600 rounded-r-full transition-all duration-300 ease-in-out"
+                <div id="modalPositiveBar" class="absolute h-full bg-gradient-to-r from-teal-400 to-teal-600 rounded-r-full transition-all duration-300 ease-in-out"
                      style="left: 50%; width: 0%;"></div>
-                <div id="modalNegativeBar" class="absolute h-full bg-gradient-to-l from-red-600 to-red-400 rounded-l-full transition-all duration-300 ease-in-out"
+                <div id="modalNegativeBar" class="absolute h-full bg-gradient-to-l from-rose-600 to-rose-400 rounded-l-full transition-all duration-300 ease-in-out"
                      style="left: 50%; width: 0%;"></div>
                 <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gray-400 z-10"></div>
             </div>
@@ -270,6 +288,17 @@
         const positiveBar = document.getElementById('positiveBar');
         const negativeBar = document.getElementById('negativeBar');
 
+        // New reference for the main daily score display and its clickable container
+        const mainDailyScoreDisplay = document.getElementById('mainDailyScore');
+        const dailySummaryHeader = document.getElementById('dailySummaryHeader');
+
+        // Nuevas referencias para el Registro Diario
+        const toggleDailyLog = document.getElementById('toggleDailyLog');
+        const dailyLogContent = document.getElementById('dailyLogContent');
+        const dailyLogToggleIcon = document.getElementById('dailyLogToggleIcon');
+        const dailyLogList = document.getElementById('dailyLogList');
+        const noLogEntriesMessage = document.getElementById('noLogEntriesMessage');
+
 
         /**
          * Mapeo de dígitos a emojis numéricos.
@@ -330,18 +359,18 @@
          */
         function showMessage(message, score) {
             messageText.textContent = message;
-            messageBox.classList.remove('hidden', 'bg-red-100', 'border-red-400', 'text-red-700', 'bg-green-100', 'border-green-400', 'text-green-700', 'bg-blue-100', 'border-blue-400', 'text-blue-700');
-            messageBox.querySelector('svg').classList.remove('text-red-500', 'text-green-500', 'text-blue-500');
+            messageBox.classList.remove('hidden', 'bg-rose-100', 'border-rose-400', 'text-rose-700', 'bg-teal-100', 'border-teal-400', 'text-teal-700', 'bg-indigo-100', 'border-indigo-400', 'text-indigo-700');
+            messageBox.querySelector('svg').classList.remove('text-rose-500', 'text-teal-500', 'text-indigo-500');
 
             if (score > 0) {
-                messageBox.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
-                messageBox.querySelector('svg').classList.add('text-green-500');
+                messageBox.classList.add('bg-teal-100', 'border-teal-400', 'text-teal-700');
+                messageBox.querySelector('svg').classList.add('text-teal-500');
             } else if (score < 0) {
-                messageBox.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
-                messageBox.querySelector('svg').classList.add('text-red-500');
+                messageBox.classList.add('bg-rose-100', 'border-rose-400', 'text-rose-700');
+                messageBox.querySelector('svg').classList.add('text-rose-500');
             } else { // score === 0
-                messageBox.classList.add('bg-blue-100', 'border-blue-400', 'text-blue-700');
-                messageBox.querySelector('svg').classList.add('text-blue-500');
+                messageBox.classList.add('bg-indigo-100', 'border-indigo-400', 'text-indigo-700');
+                messageBox.querySelector('svg').classList.add('text-indigo-500');
             }
 
             // Ocultar el mensaje después de 3 segundos
@@ -378,13 +407,13 @@
 
             reusableActivities.forEach((activity, index) => {
                 const activityItem = document.createElement('div');
-                // Usar bg-blue-200 para los elementos de la lista para un contraste sutil con el fondo del módulo
-                activityItem.className = 'flex justify-between items-center p-3 bg-blue-200 rounded-md shadow-sm border border-blue-300 cursor-pointer hover:bg-blue-300 transition duration-150 ease-in-out';
+                // Usar bg-sky-100 para los elementos de la lista para un contraste sutil con el fondo del módulo
+                activityItem.className = 'flex justify-between items-center p-3 bg-sky-100 rounded-md shadow-sm border border-sky-200 cursor-pointer hover:bg-sky-200 transition duration-150 ease-in-out';
                 activityItem.dataset.index = index; // Guardar el índice para acceder a la actividad
                 activityItem.innerHTML = `
                     <span class="text-md font-bold text-gray-800">${activity.emoji || getDefaultEmoji(activity.score)} ${activity.name}</span>
-                    <span class="text-lg font-bold ${activity.score >= 0 ? 'text-green-600' : 'text-red-600'}">${activity.score}</span>
-                    <button class="delete-activity-btn text-red-500 hover:text-red-700 ml-2 text-xl" data-index="${index}">🗑️</button>
+                    <span class="text-lg font-bold ${activity.score >= 0 ? 'text-teal-600' : 'text-rose-600'}">${activity.score}</span>
+                    <button class="delete-activity-btn text-rose-500 hover:text-rose-700 ml-2 text-xl" data-index="${index}">🗑️</button>
                 `;
                 availableActivitiesListDiv.appendChild(activityItem);
             });
@@ -397,6 +426,10 @@
             const currentDayScore = dailyScores[today] || 0; // Obtener la puntuación del día actual, o 0 si no existe
 
             todayDateDisplay.textContent = formatEmojiDate(today); // Formatear la fecha con emojis
+            mainDailyScoreDisplay.textContent = currentDayScore; // Update numerical score display
+            mainDailyScoreDisplay.classList.toggle('text-teal-600', currentDayScore >= 0);
+            mainDailyScoreDisplay.classList.toggle('text-rose-600', currentDayScore < 0);
+
 
             // Calcular el porcentaje de la barra vertical. El rango total es de -100 a 100.
             let positiveHeight = 0;
@@ -417,13 +450,14 @@
 
         /**
          * Renderiza la lista de tareas del día en el modal.
+         * @param {string} date - La fecha para la que se deben mostrar las tareas (YYYY-MM-DD).
          */
-        function renderDailyTaskListModal() {
+        function renderDailyTaskListModal(date) {
             dailyTasksListInModal.innerHTML = ''; // Limpiar la lista actual
-            const tasks = dailyActivities[today] || [];
+            const tasks = dailyActivities[date] || [];
             let modalCurrentDayScore = 0;
 
-            modalTodayDate.textContent = formatEmojiDate(today); // Formatear la fecha con emojis en el modal
+            modalTodayDate.textContent = formatEmojiDate(date); // Formatear la fecha con emojis en el modal
 
             if (tasks.length === 0) {
                 noTasksMessage.classList.remove('hidden');
@@ -434,7 +468,7 @@
                     taskItem.className = 'flex justify-between items-center p-3 bg-gray-100 rounded-md shadow-sm border border-gray-200 text-gray-800';
                     taskItem.innerHTML = `
                         <span class="text-md font-bold">${task.emoji || getDefaultEmoji(task.score)} ${task.name}</span>
-                        <span class="text-lg font-bold ${task.score >= 0 ? 'text-green-600' : 'text-red-600'}">${task.score}</span>
+                        <span class="text-lg font-bold ${task.score >= 0 ? 'text-teal-600' : 'text-rose-600'}">${task.score}</span>
                     `;
                     dailyTasksListInModal.appendChild(taskItem);
                     modalCurrentDayScore += task.score;
@@ -442,8 +476,8 @@
             }
 
             modalDailyScore.textContent = modalCurrentDayScore;
-            modalDailyScore.classList.toggle('text-green-600', modalCurrentDayScore >= 0);
-            modalDailyScore.classList.toggle('text-red-600', modalCurrentDayScore < 0);
+            modalDailyScore.classList.toggle('text-teal-600', modalCurrentDayScore >= 0);
+            modalDailyScore.classList.toggle('text-rose-600', modalCurrentDayScore < 0);
 
             // Actualizar la barra horizontal del modal
             let modalPositiveWidth = 0;
@@ -497,6 +531,38 @@
             barPositiveCount.style.width = `${(posCount / maxCount) * 100}%`;
             barNegativeCount.style.width = `${(negCount / maxCount) * 100}%`;
             barNeutralCount.style.width = `${(neutralCount / maxCount) * 100}%`;
+        }
+
+        /**
+         * Renderiza la lista de entradas del registro diario.
+         */
+        function renderDailyLog() {
+            dailyLogList.innerHTML = ''; // Limpiar la lista actual
+            const dates = Object.keys(dailyActivities).sort().reverse(); // Obtener fechas y ordenar de la más reciente a la más antigua
+
+            if (dates.length === 0 || (dates.length === 1 && dates[0] === today && dailyActivities[today].length === 0)) {
+                noLogEntriesMessage.classList.remove('hidden');
+                return;
+            } else {
+                noLogEntriesMessage.classList.add('hidden');
+            }
+
+            dates.forEach(date => {
+                // Skip the current day if it has no activities, it's already shown in the summary
+                if (date === today && dailyActivities[today].length === 0) {
+                    return;
+                }
+
+                const totalScoreForDate = dailyActivities[date].reduce((sum, activity) => sum + activity.score, 0);
+                const logEntry = document.createElement('div');
+                logEntry.className = 'flex justify-between items-center p-3 bg-white rounded-md shadow-sm border border-gray-200 cursor-pointer hover:bg-gray-100 transition duration-150 ease-in-out';
+                logEntry.dataset.date = date; // Store the date for click handling
+                logEntry.innerHTML = `
+                    <span class="text-md font-bold text-gray-800">${formatEmojiDate(date)}</span>
+                    <span class="text-lg font-bold ${totalScoreForDate >= 0 ? 'text-teal-600' : 'text-rose-600'}">${totalScoreForDate}</span>
+                `;
+                dailyLogList.appendChild(logEntry);
+            });
         }
 
 
@@ -558,6 +624,7 @@
 
                     saveData(); // Guardar los datos
                     renderDailySummary(); // Actualizar el resumen del día principal
+                    renderDailyLog(); // Update the daily log as well
                     dailyImprovementsOutput.classList.add('hidden'); // Ocultar sugerencias anteriores
                 }
             }
@@ -732,13 +799,13 @@
             }
         });
 
+        // Event listener for opening the daily tasks modal from the main summary header
+        dailySummaryHeader.addEventListener('click', () => {
+            renderDailyTaskListModal(today); // Render for today's date
+            dailyTasksModal.classList.remove('hidden');
+        });
 
-        // Event listeners para el modal de tareas del día
-        // showDailyTasksBtn.addEventListener('click', () => { // Eliminado el event listener
-        //     renderDailyTaskListModal(); // Renderizar antes de mostrar
-        //     dailyTasksModal.classList.remove('hidden');
-        // });
-
+        // Event listener for closing the daily tasks modal
         closeDailyTasksModal.addEventListener('click', () => {
             dailyTasksModal.classList.add('hidden');
         });
@@ -750,15 +817,39 @@
             }
         });
 
+        // Funcionalidad para colapsar/expandir el Registro Diario
+        toggleDailyLog.addEventListener('click', () => {
+            dailyLogContent.classList.toggle('hidden');
+            if (dailyLogContent.classList.contains('hidden')) {
+                dailyLogToggleIcon.textContent = '+';
+            } else {
+                dailyLogToggleIcon.textContent = '-';
+                renderDailyLog(); // Renderizar el registro cada vez que se abre
+            }
+        });
+
+        // Event listener para abrir el modal desde una entrada del registro diario
+        dailyLogList.addEventListener('click', (event) => {
+            const clickedItem = event.target.closest('div[data-date]');
+            if (clickedItem) {
+                const date = clickedItem.dataset.date;
+                renderDailyTaskListModal(date); // Render for the clicked date
+                dailyTasksModal.classList.remove('hidden');
+            }
+        });
+
 
         // Renderizar las actividades disponibles y el resumen diario al cargar la página por primera vez
         document.addEventListener('DOMContentLoaded', () => {
             loadData(); // Cargar datos al inicio
             renderAvailableActivities();
             renderDailySummary();
-            // Asegurarse de que el contenido de estadísticas esté oculto por defecto
+            renderDailyLog(); // Initial render of the daily log
+            // Asegurarse de que el contenido de estadísticas y registro estén ocultos por defecto
             statisticsContent.classList.add('hidden');
-            statisticsToggleIcon.textContent = '+'; // Asegurarse de que el icono sea '+' al inicio
+            statisticsToggleIcon.textContent = '+';
+            dailyLogContent.classList.add('hidden');
+            dailyLogToggleIcon.textContent = '+';
         });
     </script>
 </body>
